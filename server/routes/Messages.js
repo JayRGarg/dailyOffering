@@ -4,7 +4,7 @@ const router = express.Router();
 const getData = require('../createMessage');
 
 router.get("/", (req, res) => {
-    const responseText = 'Welcome Traveler\nWho are you? How are you feeling today?';
+    const responseText = 'Welcome Traveler';
     res.json(responseText);
 });
 

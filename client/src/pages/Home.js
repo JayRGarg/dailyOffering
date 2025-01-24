@@ -1,11 +1,14 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from 'yup';
+import { MessageContext } from '../Helper/Context';
 
 function Home() {
+
+    const {messageData, setMessageData} = useContext(MessageContext);
 
     const navigate = useNavigate();
 
@@ -20,10 +23,11 @@ function Home() {
         name: Yup.string().min(3).max(26).required(),
         mood: Yup.string().required()
     })
-    const onSubmit = (data) => {
-        console.log(data);
-        axios.post('http://localhost:8080/messages', data).then((response) => {
-            console.log(response.data);
+    const onSubmit = async (data) => {
+        //console.log(data);
+        await axios.post('http://localhost:8080/messages', data).then((response) => {
+            //console.log(response.data);
+            setMessageData(response.data);
         });
         navigate('/message');
     }
@@ -49,11 +53,25 @@ function Home() {
         });
     }, []);
 
+    function Greeting() {
+        return (
+            <div>
+                <div className="welcome">
+                    <h1>{welcome}</h1>
+                </div>
+                <div className="who">
+                    <h1>Who are you?</h1>            
+                </div>
+                <div className="how">
+                    <h1>How are you today?</h1>
+                </div>
+            </div>
+        )
+    }
+
     return (
         <div>
-            <div className="welcome">
-                {welcome}
-            </div>
+            <Greeting/>
             <div className="submitInfo">
                 <Formik initialValues={initialValues} onSubmit={onSubmit} validationSchema={validationSchema}>
                     <Form>
@@ -64,6 +82,7 @@ function Home() {
                             name="name"
                             placeholder="Name"
                         />
+                        <br/>
                         <label>Mood: </label>
                         <ErrorMessage name="mood" component="span" />
                         <Field
@@ -82,6 +101,7 @@ function Home() {
                                 })
                             }
                         </Field>
+                        <br/>
                         <button type="submit"> Generate Message </button>
                     </Form>
                 </Formik>
